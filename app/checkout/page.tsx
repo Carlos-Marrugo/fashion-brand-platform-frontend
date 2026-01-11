@@ -1,8 +1,6 @@
 "use client"
 
-import type React from "react"
-
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { Navbar } from "@/components/navbar"
@@ -21,6 +19,27 @@ export default function CheckoutPage() {
   const { items, totalPrice, clearCart } = useCart()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (items.length === 0) {
+      router.push("/carrito")
+    }
+  }, [items.length, router])
+
+  if (items.length === 0) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <Loader2 className="h-8 w-8 animate-spin mx-auto text-muted-foreground" />
+            <p className="mt-4 text-muted-foreground">Redirigiendo al carrito...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    )
+  }
 
   const shippingCost = totalPrice >= 100 ? 0 : 9.99
   const total = totalPrice + shippingCost
@@ -50,7 +69,6 @@ export default function CheckoutPage() {
       })
 
       if (result.success && result.clientSecret) {
-        // Redirect to Stripe checkout
         router.push(`/checkout/payment?session=${result.clientSecret}&orderId=${result.orderId}`)
       } else {
         setError(result.error || "Error al crear el pedido")
@@ -62,11 +80,6 @@ export default function CheckoutPage() {
     }
   }
 
-  if (items.length === 0) {
-    router.push("/carrito")
-    return null
-  }
-
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -75,7 +88,6 @@ export default function CheckoutPage() {
           <h1 className="text-3xl font-bold tracking-tight">Checkout</h1>
 
           <div className="mt-8 grid gap-8 lg:grid-cols-2">
-            {/* Form */}
             <div>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="rounded-xl border border-border bg-card p-6">
@@ -128,7 +140,6 @@ export default function CheckoutPage() {
               </form>
             </div>
 
-            {/* Order Summary */}
             <div>
               <div className="rounded-xl border border-border bg-card p-6">
                 <h2 className="text-lg font-semibold mb-4">Tu Pedido</h2>
@@ -150,7 +161,7 @@ export default function CheckoutPage() {
                           {item.size} | {item.color} | Cant: {item.quantity}
                         </p>
                       </div>
-                      <span className="font-medium text-sm">${formatPrice(item.product.price * item.quantity)}</span>
+                      <span className="font-medium text-sm">{formatPrice(item.product.price * item.quantity)}</span>
                     </div>
                   ))}
                 </div>
@@ -158,15 +169,15 @@ export default function CheckoutPage() {
                 <div className="mt-6 border-t border-border pt-4 space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Subtotal</span>
-                    <span>${formatPrice(totalPrice)}</span>
+                    <span>{formatPrice(totalPrice)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Envío</span>
-                    <span>{shippingCost === 0 ? "Gratis" : `$${formatPrice(shippingCost)}`}</span>
+                    <span>{shippingCost === 0 ? "Gratis" : formatPrice(shippingCost)}</span>
                   </div>
                   <div className="flex justify-between font-semibold text-lg pt-2 border-t border-border">
                     <span>Total</span>
-                    <span>${formatPrice(total)}</span>
+                    <span>{formatPrice(total)}</span>
                   </div>
                 </div>
               </div>
