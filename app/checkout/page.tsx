@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { useCart } from "@/lib/cart-context"
 import { createOrder } from "@/app/actions/orders"
 import { Loader2 } from "lucide-react"
+import { formatPrice } from "@/lib/utils/format-price"
 
 export default function CheckoutPage() {
   const router = useRouter()
@@ -121,7 +122,7 @@ export default function CheckoutPage() {
                       Procesando...
                     </>
                   ) : (
-                    `Pagar $${total.toFixed(2)}`
+                    <>Pagar {formatPrice(total)}</>
                   )}
                 </Button>
               </form>
@@ -149,7 +150,7 @@ export default function CheckoutPage() {
                           {item.size} | {item.color} | Cant: {item.quantity}
                         </p>
                       </div>
-                      <span className="font-medium text-sm">${(item.product.price * item.quantity).toFixed(2)}</span>
+                      <span className="font-medium text-sm">${formatPrice(item.product.price * item.quantity)}</span>
                     </div>
                   ))}
                 </div>
@@ -157,15 +158,15 @@ export default function CheckoutPage() {
                 <div className="mt-6 border-t border-border pt-4 space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Subtotal</span>
-                    <span>${totalPrice.toFixed(2)}</span>
+                    <span>${formatPrice(totalPrice)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Envío</span>
-                    <span>{shippingCost === 0 ? "Gratis" : `$${shippingCost.toFixed(2)}`}</span>
+                    <span>{shippingCost === 0 ? "Gratis" : `$${formatPrice(shippingCost)}`}</span>
                   </div>
                   <div className="flex justify-between font-semibold text-lg pt-2 border-t border-border">
                     <span>Total</span>
-                    <span>${total.toFixed(2)}</span>
+                    <span>${formatPrice(total)}</span>
                   </div>
                 </div>
               </div>

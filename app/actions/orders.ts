@@ -25,7 +25,6 @@ export async function createOrder(input: CreateOrderInput) {
   const supabase = await createClient()
 
   try {
-    // Create order in database
     const { data: order, error: orderError } = await supabase
       .from("orders")
       .insert({
@@ -41,7 +40,6 @@ export async function createOrder(input: CreateOrderInput) {
 
     if (orderError) throw orderError
 
-    // Create order items
     const orderItems = input.items.map((item) => ({
       order_id: order.id,
       product_id: item.productId,
@@ -56,7 +54,6 @@ export async function createOrder(input: CreateOrderInput) {
 
     if (itemsError) throw itemsError
 
-    // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
       ui_mode: "embedded",
       redirect_on_completion: "never",

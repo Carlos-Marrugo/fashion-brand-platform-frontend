@@ -7,6 +7,7 @@ import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { useCart } from "@/lib/cart-context"
+import { formatPrice } from "@/lib/utils/format-price"
 
 export default function CartPage() {
   const { items, removeItem, updateQuantity, totalPrice } = useCart()
@@ -97,7 +98,7 @@ export default function CartPage() {
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
-                    <span className="font-semibold">${(item.product.price * item.quantity).toFixed(2)}</span>
+                    <span className="font-semibold">{formatPrice(item.product.price * item.quantity)}</span>
                   </div>
                 </div>
               ))}
@@ -111,7 +112,7 @@ export default function CartPage() {
                 <div className="mt-6 space-y-3">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Subtotal</span>
-                    <span>${totalPrice.toFixed(2)}</span>
+                    <span>{formatPrice(totalPrice)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Envío</span>
@@ -120,7 +121,7 @@ export default function CartPage() {
                   <div className="border-t border-border pt-3">
                     <div className="flex justify-between font-semibold">
                       <span>Total</span>
-                      <span>${(totalPrice + (totalPrice >= 100 ? 0 : 9.99)).toFixed(2)}</span>
+                      <span>{formatPrice(totalPrice + (totalPrice >= 100 ? 0 : 9.99))}</span>
                     </div>
                   </div>
                 </div>
@@ -140,7 +141,7 @@ export default function CartPage() {
 
                 {totalPrice < 100 && (
                   <p className="mt-4 text-center text-sm text-muted-foreground">
-                    Agrega ${(100 - totalPrice).toFixed(2)} más para envío gratis
+                    Agrega {formatPrice(100 - totalPrice)} más para envío gratis
                   </p>
                 )}
               </div>
